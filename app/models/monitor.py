@@ -4,6 +4,7 @@ from sqlalchemy import (
     Boolean,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
@@ -17,6 +18,15 @@ from app.core.database import Base
 class Monitor(Base):
     __tablename__ = "monitors"
 
+    __table_args__ = (
+        Index(
+            "ix_monitors_user_id_url",
+            "user_id",
+            "url",
+            unique=True,
+        ),
+    )
+
     id: Mapped[int] = mapped_column(primary_key=True)
 
     user_id: Mapped[int | None] = mapped_column(
@@ -26,7 +36,12 @@ class Monitor(Base):
     )
 
     name: Mapped[str] = mapped_column(String(150))
-    url: Mapped[str] = mapped_column(String(2048), unique=True, index=True)
+
+    url: Mapped[str] = mapped_column(
+        String(2048),
+        index=True,
+    )
+
     is_active: Mapped[bool] = mapped_column(
         Boolean,
         default=True,
@@ -37,14 +52,17 @@ class Monitor(Base):
         String(20),
         nullable=True,
     )
+
     last_status_code: Mapped[int | None] = mapped_column(
         Integer,
         nullable=True,
     )
+
     last_response_time_ms: Mapped[int | None] = mapped_column(
         Integer,
         nullable=True,
     )
+
     last_checked_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         nullable=True,
@@ -54,6 +72,7 @@ class Monitor(Base):
         DateTime(timezone=True),
         server_default=func.now(),
     )
+
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),

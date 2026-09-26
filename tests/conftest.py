@@ -8,7 +8,9 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from app.core.database import Base, get_db
+from app.core.security import create_access_token, hash_password
 from app.main import app
+from app.models.user import User
 
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
@@ -53,3 +55,47 @@ async def client(db_session):
         yield async_client
 
     app.dependency_overrides.clear()
+
+
+@pytest_asyncio.fixture
+async def test_user(db_session):
+    user = User(
+        email="test@example.com",
+        hashed_password=hash_password("password123"),
+    )
+
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+
+    return user
+
+
+@pytest.fixture
+def auth_headers(test_user):
+    token = create_access_token(test_user.id)
+
+    return {
+        "Authorization": f"Bearer {token}",
+    }
+@pytest_asyncio.fixture
+async def second_user(db_session):
+    user = User(
+        email="second@example.com",
+        hashed_password=hash_password("password123"),
+    )
+
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+
+    return user
+
+
+@pytest.fixture
+def second_auth_headers(second_user):
+    token = create_access_token(second_user.id)
+
+    return {
+        "Authorization": f"Bearer {token}",
+    }
