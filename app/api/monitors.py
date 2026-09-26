@@ -205,6 +205,7 @@ async def run_check(
 async def monitor_history(
     monitor_id: int,
     limit: int = 100,
+    status_filter: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
     monitor_result = await db.execute(
@@ -219,11 +220,27 @@ async def monitor_history(
             detail="Monitor not found",
         )
 
-    result = await db.execute(
+    if status_filter is not None and status_filter not in {
+        "up",
+        "down",
+    }:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid status. Available: up, down",
+        )
+
+    query = (
         select(CheckResult)
         .where(CheckResult.monitor_id == monitor_id)
         .order_by(CheckResult.checked_at.desc())
         .limit(min(max(limit, 1), 500))
     )
+
+    if status_filter is not None:
+        query = query.where(
+            CheckResult.status == status_filter,
+        )
+
+    result = await db.execute(query)
 
     return result.scalars().all()

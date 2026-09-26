@@ -175,3 +175,95 @@ async def test_invalid_stats_period(client):
 
     assert response.status_code == 400
     assert "Invalid period" in response.json()["detail"]
+
+@pytest.mark.asyncio
+async def test_history_status_filter(client, db_session):
+    create_response = await client.post(
+        "/api/monitors",
+        json={
+            "name": "Example",
+            "url": "https://example.com",
+        },
+    )
+
+    monitor_id = create_response.json()["id"]
+
+    from app.models.monitor import CheckResult
+
+    db_session.add_all(
+        [
+            CheckResult(
+                monitor_id=monitor_id,
+                status="up",
+                status_code=200,
+                response_time_ms=100,
+            ),
+            CheckResult(
+                monitor_id=monitor_id,
+                status="down",
+                status_code=500,
+                response_time_ms=300,
+            ),
+        ]
+    )
+
+    await db_session.commit()
+
+    response = await client.get(
+        f"/api/monitors/{monitor_id}/history"
+        "?status_filter=down",
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["status"] == "down"
+    assert data[0]["status_code"] == 500
+
+@pytest.mark.asyncio
+async def test_history_status_filter(client, db_session):
+    create_response = await client.post(
+        "/api/monitors",
+        json={
+            "name": "Example",
+            "url": "https://example.com",
+        },
+    )
+
+    monitor_id = create_response.json()["id"]
+
+    from app.models.monitor import CheckResult
+
+    db_session.add_all(
+        [
+            CheckResult(
+                monitor_id=monitor_id,
+                status="up",
+                status_code=200,
+                response_time_ms=100,
+            ),
+            CheckResult(
+                monitor_id=monitor_id,
+                status="down",
+                status_code=500,
+                response_time_ms=300,
+            ),
+        ]
+    )
+
+    await db_session.commit()
+
+    response = await client.get(
+        f"/api/monitors/{monitor_id}/history"
+        "?status_filter=down",
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["status"] == "down"
+    assert data[0]["status_code"] == 500
