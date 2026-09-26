@@ -118,3 +118,32 @@ async def test_monitors_without_token(client):
     response = await client.get("/api/monitors")
 
     assert response.status_code == 401
+
+@pytest.mark.asyncio
+async def test_me_with_invalid_token(client):
+    response = await client.get(
+        "/api/auth/me",
+        headers={
+            "Authorization": "Bearer invalid-token",
+        },
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Invalid authentication token"
+
+
+@pytest.mark.asyncio
+async def test_me_with_token_for_missing_user(client):
+    from app.core.security import create_access_token
+
+    token = create_access_token(999999)
+
+    response = await client.get(
+        "/api/auth/me",
+        headers={
+            "Authorization": f"Bearer {token}",
+        },
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "User not found"

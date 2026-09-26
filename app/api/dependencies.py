@@ -1,3 +1,5 @@
+import jwt
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
@@ -17,7 +19,7 @@ async def get_current_user(
 ) -> User:
     try:
         user_id = decode_access_token(credentials.credentials)
-    except (ValueError, TypeError):
+    except Exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication token",
