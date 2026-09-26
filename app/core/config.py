@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     check_interval_seconds: int = 60
     request_timeout_seconds: int = 10
-
+    check_result_retention_days: int = 30
     telegram_bot_token: str = ""
     telegram_chat_id: str = ""
 

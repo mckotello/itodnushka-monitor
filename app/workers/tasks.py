@@ -1,9 +1,11 @@
 import asyncio
+from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 
+from app.core.config import settings
 from app.core.database import AsyncSessionLocal
-from app.models.monitor import Monitor
+from app.models.monitor import CheckResult, Monitor
 from app.services.monitor_service import check_monitor
 from app.workers.celery_app import celery_app
 
@@ -64,3 +66,25 @@ async def _check_one_monitor(monitor_id: int) -> dict:
             "response_time_ms": check_result.response_time_ms,
             "monitor_id": monitor_id,
         }
+
+@celery_app.task(
+    name="app.workers.tasks.cleanup_old_check_results",
+)
+def cleanup_old_check_results() -> int:
+    return asyncio.run(_cleanup_old_check_results())
+
+async def _cleanup_old_check_results() -> int:
+    cutoff = datetime.now(timezone.utc) - timedelta(
+        days=settings.check_result_retention_days,
+    )
+
+    async with AsyncSessionLocal() as db:
+        result = await db.execute(
+            delete(CheckResult).where(
+                CheckResult.checked_at < cutoff,
+            )
+        )
+
+        await db.commit()
+
+        return result.rowcount or 0

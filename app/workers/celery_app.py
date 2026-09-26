@@ -21,5 +21,9 @@ celery_app.conf.update(
             "task": "app.workers.tasks.check_all_monitors",
             "schedule": settings.check_interval_seconds,
         },
+        "cleanup-old-check-results": {
+            "task": "app.workers.tasks.cleanup_old_check_results",
+            "schedule": 86400,
+        },
     },
 )
