@@ -7,7 +7,9 @@ celery_app = Celery(
     "itodnushka_monitor",
     broker=settings.redis_url,
     backend=settings.redis_url,
+    include=["app.workers.tasks"],
 )
+
 
 celery_app.conf.update(
     task_serializer="json",
