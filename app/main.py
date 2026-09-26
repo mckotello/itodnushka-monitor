@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.api.auth import router as auth_router
 from app.api.monitors import router as monitors_router
 from app.core.config import settings
 
@@ -28,7 +29,7 @@ app.mount(
 @app.get("/", include_in_schema=False)
 async def dashboard():
     return FileResponse(
-        BASE_DIR / "static" / "index.html"
+        BASE_DIR / "static" / "index.html",
     )
 
 
@@ -39,6 +40,11 @@ async def health():
         "service": settings.app_name,
     }
 
+
+app.include_router(
+    auth_router,
+    prefix="/api",
+)
 
 app.include_router(
     monitors_router,

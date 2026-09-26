@@ -10,27 +10,319 @@
     <title>ITоднушка Monitor</title>
 
     <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        .auth-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 430px;
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+        }
+
+        .auth-logo {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .auth-subtitle {
+            color: #777;
+            margin-bottom: 28px;
+        }
+
+        .auth-title {
+            margin: 0 0 20px;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .auth-form label {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            font-weight: 600;
+        }
+
+        .auth-form input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .auth-error {
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: #ffe8e8;
+            color: #b42318;
+            font-size: 14px;
+        }
+
+        .auth-switch {
+            margin-top: 20px;
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .auth-switch button {
+            border: 0;
+            background: none;
+            padding: 0;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-email {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .button-danger {
+            color: #b42318;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- Authentication -->
+
+<div
+    class="auth-screen"
+    id="authScreen"
+>
+
+    <div class="auth-card">
+
+        <div class="auth-logo">
+            ITоднушка Monitor
+        </div>
+
+        <div class="auth-subtitle">
+            Мониторинг сайтов и API
+        </div>
+
+
+        <!-- Login -->
+
+        <div id="loginView">
+
+            <h1 class="auth-title">
+                Вход
+            </h1>
+
+            <form
+                class="auth-form"
+                id="loginForm"
+            >
+
+                <label>
+                    Email
+
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        required
+                    >
+                </label>
+
+
+                <label>
+                    Пароль
+
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Минимум 8 символов"
+                        autocomplete="current-password"
+                        required
+                    >
+                </label>
+
+
+                <div
+                    id="loginError"
+                    class="auth-error hidden"
+                ></div>
+
+
+                <button
+                    type="submit"
+                    class="button button-primary button-full"
+                    id="loginButton"
+                >
+                    Войти
+                </button>
+
+            </form>
+
+
+            <div class="auth-switch">
+                Нет аккаунта?
+
+                <button
+                    type="button"
+                    id="showRegisterButton"
+                >
+                    Зарегистрироваться
+                </button>
+            </div>
+
+        </div>
+
+
+        <!-- Register -->
+
+        <div
+            id="registerView"
+            class="hidden"
+        >
+
+            <h1 class="auth-title">
+                Регистрация
+            </h1>
+
+            <form
+                class="auth-form"
+                id="registerForm"
+            >
+
+                <label>
+                    Email
+
+                    <input
+                        type="email"
+                        id="registerEmail"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        required
+                    >
+                </label>
+
+
+                <label>
+                    Пароль
+
+                    <input
+                        type="password"
+                        id="registerPassword"
+                        placeholder="Минимум 8 символов"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+                </label>
+
+
+                <div
+                    id="registerError"
+                    class="auth-error hidden"
+                ></div>
+
+
+                <button
+                    type="submit"
+                    class="button button-primary button-full"
+                    id="registerButton"
+                >
+                    Создать аккаунт
+                </button>
+
+            </form>
+
+
+            <div class="auth-switch">
+                Уже есть аккаунт?
+
+                <button
+                    type="button"
+                    id="showLoginButton"
+                >
+                    Войти
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Dashboard -->
+
+<div
+    class="container hidden"
+    id="dashboard"
+>
 
     <header class="header">
 
         <div>
-            <div class="logo">ITоднушка Monitor</div>
+            <div class="logo">
+                ITоднушка Monitor
+            </div>
+
             <div class="subtitle">
                 Мониторинг сайтов и API
             </div>
         </div>
 
-        <button
-            class="button button-primary"
-            id="addMonitorButton"
-        >
-            + Добавить монитор
-        </button>
+
+        <div class="header-user">
+
+            <span
+                class="user-email"
+                id="currentUserEmail"
+            ></span>
+
+            <button
+                class="button button-danger"
+                id="logoutButton"
+            >
+                Выйти
+            </button>
+
+            <button
+                class="button button-primary"
+                id="addMonitorButton"
+            >
+                + Добавить монитор
+            </button>
+
+        </div>
 
     </header>
 

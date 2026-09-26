@@ -14,8 +14,13 @@ class Settings(BaseSettings):
     check_interval_seconds: int = 60
     request_timeout_seconds: int = 10
     check_result_retention_days: int = 30
+
     telegram_bot_token: str = ""
     telegram_chat_id: str = ""
+
+    jwt_secret_key: str = "change-me-in-production"
+    jwt_algorithm: str = "HS256"
+    jwt_access_token_expire_minutes: int = 60
 
     model_config = SettingsConfigDict(
         env_file=".env",
