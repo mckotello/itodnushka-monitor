@@ -8,6 +8,24 @@ ITоднушка Monitor регулярно проверяет указанны�
 
 Проект построен как production-like backend с асинхронным API, фоновой обработкой задач, PostgreSQL, Redis, JWT-аутентификацией и Docker.
 
+## Интерфейс
+
+### Авторизация
+
+![Авторизация](docs/screenshots/login.png)
+
+### Dashboard
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Статистика
+
+![Статистика](docs/screenshots/statistics.png)
+
+### История проверок
+
+![История проверок](docs/screenshots/history.png)
+
 ## Возможности
 
 ### Мониторинг
