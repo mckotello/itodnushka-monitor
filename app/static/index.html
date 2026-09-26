@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ITоднушка Monitor</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+
+        <div>
+            <div class="logo">ITоднушка Monitor</div>
+            <div class="subtitle">
+                Мониторинг сайтов и API
+            </div>
+        </div>
+
+        <button
+            class="button button-primary"
+            id="addMonitorButton"
+        >
+            + Добавить монитор
+        </button>
+
+    </header>
+
+
+    <main>
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <span class="stat-label">Всего</span>
+                <strong id="totalMonitors">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">Работают</span>
+                <strong id="upMonitors">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">Недоступны</span>
+                <strong id="downMonitors">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">Не проверялись</span>
+                <strong id="unknownMonitors">0</strong>
+            </div>
+
+        </section>
+
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <div>
+                    <h1>Мониторы</h1>
+
+                    <p>
+                        Состояние ваших сайтов и API
+                    </p>
+                </div>
+
+                <button
+                    class="button"
+                    id="refreshButton"
+                >
+                    Обновить
+                </button>
+
+            </div>
+
+
+            <div
+                id="monitorsContainer"
+                class="monitors"
+            >
+                <div class="empty">
+                    Загрузка...
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- Monitor details -->
+
+<div
+    class="modal hidden"
+    id="detailsModal"
+>
+
+    <div class="modal-content details-modal">
+
+        <div class="modal-header">
+
+            <div>
+                <h2 id="detailsTitle">
+                    Монитор
+                </h2>
+
+                <div
+                    class="details-url"
+                    id="detailsUrl"
+                ></div>
+            </div>
+
+            <button
+                class="modal-close"
+                id="closeDetailsButton"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="period-buttons">
+
+            <button
+                class="button period-button active"
+                data-period="1h"
+            >
+                1 час
+            </button>
+
+            <button
+                class="button period-button"
+                data-period="24h"
+            >
+                24 часа
+            </button>
+
+            <button
+                class="button period-button"
+                data-period="7d"
+            >
+                7 дней
+            </button>
+
+            <button
+                class="button period-button"
+                data-period="30d"
+            >
+                30 дней
+            </button>
+
+        </div>
+
+
+        <div class="details-stats">
+
+            <div class="detail-stat">
+                <span>Uptime</span>
+                <strong id="detailUptime">—</strong>
+            </div>
+
+            <div class="detail-stat">
+                <span>Проверок</span>
+                <strong id="detailChecks">—</strong>
+            </div>
+
+            <div class="detail-stat">
+                <span>Средний ответ</span>
+                <strong id="detailAverage">—</strong>
+            </div>
+
+            <div class="detail-stat">
+                <span>Минимум</span>
+                <strong id="detailMin">—</strong>
+            </div>
+
+            <div class="detail-stat">
+                <span>Максимум</span>
+                <strong id="detailMax">—</strong>
+            </div>
+
+        </div>
+
+
+        <div class="chart-wrapper">
+
+            <div class="chart-title">
+                Время ответа
+            </div>
+
+            <canvas
+                id="responseChart"
+                width="900"
+                height="280"
+            ></canvas>
+
+        </div>
+
+
+        <div class="history-section">
+
+            <div class="chart-title">
+                Последние проверки
+            </div>
+
+            <div id="historyContainer">
+                Загрузка...
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Add monitor -->
+
+<div
+    class="modal hidden"
+    id="monitorModal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>Новый монитор</h2>
+
+            <button
+                class="modal-close"
+                id="closeModalButton"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="monitorForm">
+
+            <label>
+                Название
+
+                <input
+                    type="text"
+                    id="monitorName"
+                    placeholder="Мой сайт"
+                    required
+                    maxlength="150"
+                >
+            </label>
+
+
+            <label>
+                URL
+
+                <input
+                    type="url"
+                    id="monitorUrl"
+                    placeholder="https://example.com"
+                    required
+                >
+            </label>
+
+
+            <div
+                id="formError"
+                class="form-error hidden"
+            ></div>
+
+
+            <button
+                type="submit"
+                class="button button-primary button-full"
+            >
+                Создать монитор
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="/static/app.js"></script>
+
+</body>
+</html>
