@@ -1,3 +1,5 @@
+[![CI](https://github.com/mckotello/itodnushka-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/mckotello/itodnushka-monitor/actions/workflows/ci.yml)
+
 # ITоднушка Monitor
 
 Сервис мониторинга доступности сайтов и API.
